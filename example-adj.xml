@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cesAna version="1.0" type="lex disamb">
+<chunkList>
+<chunk type="s">
+<tok>
+<orth>Czarny</orth>
+<lex><base>czarny</base><ctag>adj:sg:nom:m1:pos</ctag></lex>
+<lex disamb="1"><base>czarny</base><ctag>adj:sg:nom:m2:pos</ctag></lex>
+<lex><base>czarny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+<lex><base>czarny</base><ctag>adj:sg:acc:m3:pos</ctag></lex>
+</tok>
+<tok>
+<orth>,</orth>
+<lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+</tok>
+<tok>
+<orth>gruby</orth>
+<lex><base>gruby</base><ctag>adj:sg:nom:m1:pos</ctag></lex>
+<lex disamb="1"><base>gruby</base><ctag>adj:sg:nom:m2:pos</ctag></lex>
+<lex><base>gruby</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+<lex><base>gruby</base><ctag>adj:sg:acc:m3:pos</ctag></lex>
+</tok>
+<tok>
+<orth>kot</orth>
+<lex><base>kota</base><ctag>subst:pl:gen:f</ctag></lex>
+<lex disamb="1"><base>kot</base><ctag>subst:sg:nom:m2</ctag></lex>
+</tok>
+<tok>
+<orth>pije</orth>
+<lex disamb="1"><base>pić</base><ctag>fin:sg:ter:imperf</ctag></lex>
+</tok>
+<tok>
+<orth>świeże</orth>
+<lex disamb="1"><base>świeży</base><ctag>adj:sg:acc:n</ctag></lex>
+</tok>
+<tok>
+<orth>mleko</orth>
+<lex><base>mleko</base><ctag>subst:sg:nom:n</ctag></lex>
+<lex disamb="1"><base>mleko</base><ctag>subst:sg:acc:n</ctag></lex>
+<lex><base>mleko</base><ctag>subst:sg:voc:n</ctag></lex>
+</tok>
+<ns/>
+<tok>
+<orth>.</orth>
+<lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+</tok>
+</chunk>
+
+</chunkList>
+</cesAna>
