@@ -6,7 +6,7 @@ public class Word {
 	private String orth;
 	private String base;
 	private String tags;
-	
+
 	public Word(String orth, String base, String tags) {
 		super();
 		this.id = generatorId++;
@@ -14,7 +14,7 @@ public class Word {
 		this.base = base;
 		this.tags = tags;
 	}
-	
+
 	public String getOrth() {
 		return orth;
 	}
@@ -33,21 +33,19 @@ public class Word {
 	public void setTags(String tags) {
 		this.tags = tags;
 	}
+	public int getId() {
+		 return this.id;
+	 }
 
 	@Override
 	public String toString() {
 		return "Word [Original=" + orth + ", base=" + base + ", tags=" + tags + "]";
 	}
-	
+
 	public String parse() {
-//		TODO: conjunction parse with base
-		if (this.tags.equals("interp")) {
+		if (this.tags.equals("interp") || this.tags.equals("conj")) {
 			return this.base;
 		}
 		return this.tags + ":id" + this.id;
 	}
-	 public int getId() {
-		 return this.id;
-	 }
-	
 }

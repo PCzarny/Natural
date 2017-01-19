@@ -14,14 +14,12 @@ public class XmlParser {
 		try {
 //			FileManager.removeSecondLine();
 //			File file = new File("TaKIPI/out.xml");
-			
-//			For SentenceAnalyser.removeAdjectives tests
-//			File file = new File("example-adj.xml");
-			
-//			For SentenceAnalyser.splitSubstances tests
-			File file = new File("example-subst.xml");
+
+//			File with default sentences
+			File file = new File("out.xml");
+
 			JAXBContext jaxbContext = JAXBContext.newInstance(CesAna.class);
-			
+
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			cesAna = (CesAna) jaxbUnmarshaller.unmarshal(file);
 		  } catch (JAXBException e) {

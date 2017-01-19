@@ -11,7 +11,7 @@ public class Sentence {
 	}
 
 	public Sentence(){
-		this.wordList = new ArrayList();
+		this.wordList = new ArrayList<>();
 	}
 
 	public List<Word> getWordList() {
@@ -74,8 +74,11 @@ public class Sentence {
 					System.out.println(ex.toString());
 				}
 			} else {
-//				TODO: separate for interpunction and conjuctions
-				subsentence.getWordList().add(new Word(word, word, "interp"));
+				if(word.matches("[a-z]+")) {
+					subsentence.getWordList().add(new Word(word, word, "conj"));
+				} else {
+					subsentence.getWordList().add(new Word(word, word, "interp"));
+				};
 			}
 		}
 

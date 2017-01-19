@@ -12,34 +12,17 @@ public class SentenceAnalyser {
 	public static Word toBe = new Word("jest", "jest", "");
 
 	public static List<Sentence> analyse(Sentence sentence) {
-		List<Sentence> outputSentences = new ArrayList<>();
 		List<Sentence> simpleFacts = new ArrayList<>();
+		List<Sentence> outputSentences = new ArrayList<>();
+
 		System.out.println("Zdanie wejściowe: " + sentence.print());
 
-//		Till any adjective - substance collocation exist => create simple facts
-		Sentence foundFact;
-		while (true) {
-			foundFact = removeAdjectives(sentence);
-			if (foundFact == null) {
-				break;
-			}
-			simpleFacts.add(foundFact);
-		}
+		simpleFacts.addAll(removeAllAdjectives(sentence));
 
-		List<Sentence> foundFacts;
-		outputSentences.add(sentence);
-		for (int i = 0; i < outputSentences.size(); i++) {
-//			System.out.println(outputSentences.get(i).print());
-			foundFacts = splitSubstances(outputSentences.get(i));
+//		outputSentences = splitAllComplex(sentence);
+		outputSentences.addAll(splitAllContext(sentence));
 
-//			If current sentence was divided into 2 smaller, is not final and can be removed
-			if (foundFacts != null && foundFacts.size() == 2) {
-				outputSentences.remove(i);
-				i--;
-			}
-
-			outputSentences.addAll(foundFacts);
-		}
+//		outputSentences.addAll(splitAllSubstances(sentence));
 
 //		Return array of facts inside outputSentences and modified sentence
 		System.out.println("Wynik działania");
@@ -49,16 +32,34 @@ public class SentenceAnalyser {
 		for(Sentence fact : outputSentences) {
 			System.out.println(fact.print());
 		}
+		System.out.println("--------------");
 		return outputSentences;
 	}
 
-	public static Sentence removeAdjectives(Sentence sentence) {
+//	Till any adjective - substance collocation exist => create simple facts
+	public static List<Sentence> removeAllAdjectives(Sentence sentence) {
+		Sentence foundFact;
+		List<Sentence> simpleFacts = new ArrayList<Sentence>();
+
+		while (true) {
+			foundFact = removeOneAdjective(sentence);
+			if (foundFact == null) {
+				break;
+			}
+			simpleFacts.add(foundFact);
+		}
+
+		return simpleFacts;
+	}
+	public static Sentence removeOneAdjective(Sentence sentence) {
 		Sentence fact = new Sentence();
 		String grammarForms = sentence.parse();
-	    String pattern = "(adj:((?:sg|pl):[a-z]+:(?:[mnf][1-3]))\\S*:id([0-9]+) (, )?)(subst:\\2\\S*:id([0-9]+) )";
+	    String pattern = "(adj:(sg|pl)\\S*:id([0-9]+) (, )?)(subst:\\2\\S*:id([0-9]+) )";
 
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(grammarForms);
+//	    TaKiPi have wrong tags :/
+//	    String pattern = "(adj:((?:sg|pl):[a-z]+:(?:[mnf][1-3]))\\S*:id([0-9]+) (, )?)(subst:\\2\\S*:id([0-9]+) )";
+
+	    Matcher m = Pattern.compile(pattern).matcher(grammarForms);
 
 		if (m.find( )) {
 //			TODO: Check if parse properly
@@ -94,6 +95,25 @@ public class SentenceAnalyser {
 		return null;
 	}
 
+	public static List<Sentence> splitAllSubstances(Sentence sentence) {
+		List<Sentence> outputSentences = new ArrayList<>();
+		List<Sentence> foundFacts;
+
+		outputSentences.add(sentence);
+
+		for (int i = 0; i < outputSentences.size(); i++) {
+			foundFacts = splitSubstances(outputSentences.get(i));
+
+//			If current sentence was divided into 2 smaller, is not final and can be removed
+			if (foundFacts != null && foundFacts.size() == 2) {
+				outputSentences.remove(i);
+				i--;
+			}
+
+			outputSentences.addAll(foundFacts);
+		}
+		return outputSentences;
+	}
 	public static List<Sentence> splitSubstances(Sentence sentence) {
 		List<Sentence> outputSentences = new ArrayList<>();
 		String grammarForms = sentence.parse();
@@ -101,8 +121,7 @@ public class SentenceAnalyser {
 //		TODO: Check others conjuctions
 	    String pattern = "(subst:\\S*:id[0-9]+ )((?:[,i] subst:\\S*:id[0-9]+ )+)";
 
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(grammarForms);
+	    Matcher m = Pattern.compile(pattern).matcher(grammarForms);
 
 		if (m.find( )) {
 			String firstSubst = m.group(1);
@@ -119,4 +138,57 @@ public class SentenceAnalyser {
 
 		return outputSentences;
 	}
+
+	public static List<Sentence> splitAllContext(Sentence sentence) {
+		List<Sentence> outputSentences = new ArrayList<>();
+		List<Sentence> foundFacts;
+
+		outputSentences.add(sentence);
+
+		for (int i = 0; i < outputSentences.size(); i++) {
+			foundFacts = splitComplex(outputSentences.get(i));
+
+//			If current sentence was divided into 2 smaller, is not final and can be removed
+			if (foundFacts != null && foundFacts.size() == 2) {
+				outputSentences.remove(i);
+				i--;
+			}
+
+			outputSentences.addAll(foundFacts);
+		}
+		return outputSentences;
+	}
+	public static List<Sentence> splitComplex(Sentence sentence) {
+		List<Sentence> list = new ArrayList<Sentence>();
+		String grammarForms = sentence.parse();
+
+		System.out.println(grammarForms);
+
+//		todo: niekoniecznie zaczyna sie od s
+		String verb = "(?:fin|praet)";
+//		String pattern = String.format("(subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* (%s:\\2) ((?!%s).)*) (,|i|, ale|, kiedy) ((?!%s).)*", verb, verb, verb, verb);
+
+//		String pattern = String.format("(subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* (%s:\\2) ((?!%s).)*)", verb, verb, verb, verb);
+		String pattern = String.format("((subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* %s:\\3((?!%s).)*) (i|, ale|, kiedy|, bo|, gdy|, kiedy|, podczas gdy|, ponieważ|, bowiem) )((?!%s).)*%s", verb, verb, verb, verb, verb);
+//	    String pattern = "((subst:(sg|pl):((?!fin).)*(fin:\\3){1}((?!fin).)*) (i|,) )fin";
+
+	    Matcher m = Pattern.compile(pattern).matcher(grammarForms);
+
+	    if (m.find()) {
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println(m.group(1));
+			String first = m.group(2);
+			String second = grammarForms.replaceAll(m.group(1), "");
+//			String nextSubsts = grammarForms.replaceAll(m.group(1), "");
+//
+			System.out.println(sentence.createSentence(first).print());
+			System.out.println(sentence.createSentence(second).print());
+
+			list.add(sentence.createSentence(first));
+			list.add(sentence.createSentence(grammarForms.replaceAll(m.group(1), "")));
+		}
+
+		return list;
+	}
+
 }
