@@ -14,8 +14,7 @@ public class SentenceAnalyser {
 	public static List<Sentence> analyse(Sentence sentence) {
 		List<Sentence> simpleFacts = new ArrayList<>();
 		List<Sentence> outputSentences = new ArrayList<>();
-
-		System.out.println("Zdanie wej≈õciowe: " + sentence.print());
+//		System.out.println("\nZdanie wejúciowe: " + "\n" + sentence.print());
 
 		simpleFacts.addAll(removeAllAdjectives(sentence));
 
@@ -25,7 +24,7 @@ public class SentenceAnalyser {
 //		outputSentences.addAll(splitAllSubstances(sentence));
 
 //		Return array of facts inside outputSentences and modified sentence
-		System.out.println("Wynik dzia≈Çania");
+		System.out.println("\nFakty elementarne:");
 		for(Sentence fact : simpleFacts) {
 			System.out.println(fact.print());
 		}
@@ -162,30 +161,44 @@ public class SentenceAnalyser {
 		List<Sentence> list = new ArrayList<Sentence>();
 		String grammarForms = sentence.parse();
 
-		System.out.println(grammarForms);
+//		System.out.println(grammarForms);
 
 //		todo: niekoniecznie zaczyna sie od s
 		String verb = "(?:fin|praet)";
-//		String pattern = String.format("(subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* (%s:\\2) ((?!%s).)*) (,|i|, ale|, kiedy) ((?!%s).)*", verb, verb, verb, verb);
+		String subject = "(?:subst|ppron12|ppron3)";
 
-//		String pattern = String.format("(subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* (%s:\\2) ((?!%s).)*)", verb, verb, verb, verb);
-		String pattern = String.format("((subst:(sg|pl):[a-z]+:([mnf])((?!%s).)* %s:\\3((?!%s).)*) (i|, ale|, kiedy|, bo|, gdy|, kiedy|, podczas gdy|, poniewazÃá|, bowiem) )((?!%s).)*%s", verb, verb, verb, verb, verb);
-//	    String pattern = "((subst:(sg|pl):((?!fin).)*(fin:\\3){1}((?!fin).)*) (i|,) )fin";
+		String pattern = String.format("((%s:(sg|pl):[a-z]+:([mnf])((?!%s).)* %s:\\3((?!%s).)*) (i|, ale|, kiedy|, bo|, gdy|, kiedy|, poniewaø|, bowiem) )((?!%s).)*%s",
+				subject,
+				verb,
+				verb,
+				verb,
+				verb,
+				verb);
 
 	    Matcher m = Pattern.compile(pattern).matcher(grammarForms);
 
 	    if (m.find()) {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println(m.group(1));
+//			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//			System.out.println(m.group(1));
 			String first = m.group(2);
 			String second = grammarForms.replaceAll(m.group(1), "");
 //			String nextSubsts = grammarForms.replaceAll(m.group(1), "");
 //
-			System.out.println(sentence.createSentence(first).print());
-			System.out.println(sentence.createSentence(second).print());
+			
+			Sentence firstSentence = sentence.createSentence(first);
+			Sentence restSentence = sentence.createSentence(grammarForms.replaceAll(m.group(1), ""));
 
-			list.add(sentence.createSentence(first));
-			list.add(sentence.createSentence(grammarForms.replaceAll(m.group(1), "")));
+			firstSentence.setSubject(firstSentence.findSubject());
+			if(restSentence.findSubject() == null) {
+				restSentence.setSubject(firstSentence.getSubject());
+//				TODO: check if action is compatible
+				restSentence.getWordList().add(0, firstSentence.getSubject());
+			} else {
+				restSentence.setSubject(restSentence.findSubject());
+			}
+			
+			list.add(firstSentence);
+			list.add(restSentence);
 		}
 
 		return list;

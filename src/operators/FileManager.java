@@ -20,7 +20,7 @@ public class FileManager {
 	
 	private static void saveTextToFile(String text, String fileName){
 		try{
-		    PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+		    PrintWriter writer = new PrintWriter(fileName, "CP1250");
 		    writer.print(text);
 		    writer.close();
 		} catch (Exception e) {
@@ -36,7 +36,7 @@ public class FileManager {
 		
 		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(p.getOutputStream()), true);
 		printWriter.println("cd TaKIPI");
-		printWriter.println("takipi.exe -it TXT -i in.txt -o out.xml");
+		printWriter.println("takipi.exe -CP1250 -it TXT -i in.txt -o out.xml");
 		printWriter.println("exit");
 		
 		p.waitFor();

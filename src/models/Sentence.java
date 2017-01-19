@@ -1,11 +1,16 @@
 package models;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Sentence {
 	private List<Word> wordList;
+	private Word subject;
 
+	
+	
 	public Sentence(List<Word> wordList){
 		this.wordList = wordList;
 	}
@@ -83,5 +88,41 @@ public class Sentence {
 		}
 
 		return subsentence;
+	}
+
+	
+	public Word getSubject() {
+		return subject;
+	}
+
+	public void setSubject(Word subject) {
+		this.subject = subject;
+	}
+	
+	public void setSubject(String tag) {
+		String pattern = "\\S*:id([0-9]+)";
+
+	    Matcher m = Pattern.compile(pattern).matcher(tag);
+	    if (m.find( )) {
+	    	int id = Integer.parseInt(m.group(1));
+	    	this.subject = this.getWordById(id);
+	    }
+	}
+	
+	public Word findSubject() {
+		Matcher mat = Pattern.compile("((?:subst|ppron12|ppron3):(sg|pl)\\S*:id[0-9]+) ((?!(?:fin|praet)).)*(?:fin|praet):\\2").matcher(this.parse());
+//		 System.out.println("parse" + this.parse());
+		if (mat.find()) {
+			String pattern = "\\S*:id([0-9]+)";
+
+		    Matcher m = Pattern.compile(pattern).matcher(mat.group(1));
+//		    System.out.println("Siema" + mat.group(1));
+		    if (m.find( )) {
+//		    	System.out.println("nara" + m.group(1));
+		    	int id = Integer.parseInt(m.group(1));
+		    	return this.getWordById(id);
+		    }
+		}
+		return null;
 	}
 }

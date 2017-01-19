@@ -12,14 +12,10 @@ public class XmlParser {
 	public static CesAna parse(){
 		CesAna cesAna = null;
 		try {
-//			FileManager.removeSecondLine();
-//			File file = new File("TaKIPI/out.xml");
-
-//			File with default sentences
-			File file = new File("out.xml");
-
+			FileManager.removeSecondLine();
+			File file = new File("TaKIPI/out.xml");
 			JAXBContext jaxbContext = JAXBContext.newInstance(CesAna.class);
-
+			
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			cesAna = (CesAna) jaxbUnmarshaller.unmarshal(file);
 		  } catch (JAXBException e) {

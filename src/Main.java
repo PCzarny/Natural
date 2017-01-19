@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Scanner;
 
 import models.Sentence;
 import operators.FileManager;
@@ -10,10 +11,9 @@ public class Main {
 	private static void run(String text){
 		FileManager.createInputFile(text);
 
-		System.out.println("Wynik dzia�ania programu:");
 		List<Sentence> sentenceList = SentencesCreator.create(XmlParser.parse());
 		for (Sentence sentence : sentenceList){
-			System.out.println(sentence.toString());
+			SentenceAnalyser.analyse(sentence);
 		}
 	}
 
@@ -25,19 +25,13 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-//		Scanner scanner = new Scanner(System.in);
-//		String line = "";
-//		do{
-//			System.out.println("Wpisz tekst:");
-//			line = scanner.nextLine();
-//
-//			run(line);
-//
-//			System.out.println("Wpisz 't' aby kontynuowa�:");
-//			line = scanner.nextLine();
-//		} while (line.matches("t"));
-//		scanner.close();
+		Scanner scanner = new Scanner(System.in);
+		String line = "";
+		do{
+			System.out.println("Wpisz zdanie:");
+			line = scanner.nextLine();
 
-		analyse();
+			run(line);
+		} while (true);
 	}
 }
