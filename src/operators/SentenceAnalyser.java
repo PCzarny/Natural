@@ -14,14 +14,12 @@ public class SentenceAnalyser {
 	public static List<Sentence> analyse(Sentence sentence) {
 		List<Sentence> simpleFacts = new ArrayList<>();
 		List<Sentence> outputSentences = new ArrayList<>();
-//		System.out.println("\nZdanie wejúciowe: " + "\n" + sentence.print());
 
 		simpleFacts.addAll(removeAllAdjectives(sentence));
 
-//		outputSentences = splitAllComplex(sentence);
-		outputSentences.addAll(splitAllContext(sentence));
+		outputSentences.addAll(splitAllComplex(sentence));
 
-//		outputSentences.addAll(splitAllSubstances(sentence));
+		outputSentences.addAll(splitAllSubstances(outputSentences));
 
 //		Return array of facts inside outputSentences and modified sentence
 		System.out.println("\nFakty elementarne:");
@@ -68,8 +66,6 @@ public class SentenceAnalyser {
 
 			Boolean followedByComma = m.group(4) != null;
 
-//			System.out.println("Adj ID: " + adjectiveId );
-//			System.out.println("Subst ID: " + substanceId );
 
 //			Create fact => substance + be + adjective
 			fact.getWordList().add(sentence.getWordById(substanceId));
@@ -94,11 +90,11 @@ public class SentenceAnalyser {
 		return null;
 	}
 
-	public static List<Sentence> splitAllSubstances(Sentence sentence) {
+	public static List<Sentence> splitAllSubstances(List<Sentence> sentence) {
 		List<Sentence> outputSentences = new ArrayList<>();
 		List<Sentence> foundFacts;
 
-		outputSentences.add(sentence);
+		outputSentences.addAll(sentence);
 
 		for (int i = 0; i < outputSentences.size(); i++) {
 			foundFacts = splitSubstances(outputSentences.get(i));
@@ -138,7 +134,7 @@ public class SentenceAnalyser {
 		return outputSentences;
 	}
 
-	public static List<Sentence> splitAllContext(Sentence sentence) {
+	public static List<Sentence> splitAllComplex(Sentence sentence) {
 		List<Sentence> outputSentences = new ArrayList<>();
 		List<Sentence> foundFacts;
 
@@ -161,13 +157,11 @@ public class SentenceAnalyser {
 		List<Sentence> list = new ArrayList<Sentence>();
 		String grammarForms = sentence.parse();
 
-//		System.out.println(grammarForms);
-
-//		todo: niekoniecznie zaczyna sie od s
+//		TODO: niekoniecznie zaczyna sie od subject
 		String verb = "(?:fin|praet)";
 		String subject = "(?:subst|ppron12|ppron3)";
 
-		String pattern = String.format("((%s:(sg|pl):[a-z]+:([mnf])((?!%s).)* %s:\\3((?!%s).)*) (i|, ale|, kiedy|, bo|, gdy|, kiedy|, poniewaø|, bowiem) )((?!%s).)*%s",
+		String pattern = String.format("((%s:(sg|pl):[a-z]+:([mnf])((?!%s).)* %s:\\3((?!%s).)*) (i|, ale|, kiedy|, bo|, gdy|, kiedy|, poniewa≈º|, bowiem) )((?!%s).)*%s",
 				subject,
 				verb,
 				verb,
@@ -178,25 +172,21 @@ public class SentenceAnalyser {
 	    Matcher m = Pattern.compile(pattern).matcher(grammarForms);
 
 	    if (m.find()) {
-//			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//			System.out.println(m.group(1));
 			String first = m.group(2);
 			String second = grammarForms.replaceAll(m.group(1), "");
-//			String nextSubsts = grammarForms.replaceAll(m.group(1), "");
-//
-			
+
 			Sentence firstSentence = sentence.createSentence(first);
 			Sentence restSentence = sentence.createSentence(grammarForms.replaceAll(m.group(1), ""));
 
 			firstSentence.setSubject(firstSentence.findSubject());
 			if(restSentence.findSubject() == null) {
 				restSentence.setSubject(firstSentence.getSubject());
-//				TODO: check if action is compatible
+//				TODO: check if action is compatible with new subject
 				restSentence.getWordList().add(0, firstSentence.getSubject());
 			} else {
 				restSentence.setSubject(restSentence.findSubject());
 			}
-			
+
 			list.add(firstSentence);
 			list.add(restSentence);
 		}
