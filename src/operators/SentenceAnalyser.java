@@ -12,14 +12,10 @@ public class SentenceAnalyser {
 	public static Word toBe = new Word("jest", "jest", "");
 
 	public static List<Sentence> analyse(Sentence sentence) {
-		List<Sentence> simpleFacts = new ArrayList<>();
-		List<Sentence> outputSentences = new ArrayList<>();
+		List<Sentence> simpleFacts = removeAllAdjectives(sentence);
+		List<Sentence> outputSentences = splitAllComplex(sentence);
 
-		simpleFacts.addAll(removeAllAdjectives(sentence));
-
-		outputSentences.addAll(splitAllComplex(sentence));
-
-		outputSentences.addAll(splitAllSubstances(outputSentences));
+		outputSentences = splitAllSubstances(outputSentences);
 
 //		Return array of facts inside outputSentences and modified sentence
 		System.out.println("\nFakty elementarne:");
